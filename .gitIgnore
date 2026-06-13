@@ -1,0 +1,36 @@
+# Build folders
+build/
+build-linux/
+
+# Compiled output
+out.asm
+out.o
+out
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+install_manifest.txt
+
+# VS / VSCode
+.vs/
+.vscode/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+
+# Compiled binaries
+*.exe
+*.obj
+*.o
+
+# Debug/Release folders
+Debug/
+Release/
+
+# OS files
+.DS_Store
+Thumbs.db
