@@ -4,67 +4,10 @@
 #include <sstream>
 #include <optional>
 #include <vector>
+#include "./tokenization.hpp"
 
-enum class TokenType {
-        _return ,
-        int_lit ,
-        semi
-};
 
-struct Token {
-        TokenType type;
-        std::optional<std::string> value {}; // this value may or may not exists
 
-};
-std::vector<Token> tokenize(const std::string& str){
-    std::string buff;
-    std::vector<Token> tokens ;
-   for(int i=0;i<str.length();i++){
-      char c = str.at(i);
-      if(std::isalpha(c)){
-          buff.push_back(c);
-          i++;
-          while(i<str.length() && std::isalnum(str.at(i))){
-            buff.push_back(str.at(i));
-            i++;
-          }
-          i--;
-          if(buff=="return"){
-            tokens.push_back(Token{TokenType::_return});
-            buff.clear();
-            continue;
-          }else{
-            std:: cerr<<"You messed up!"<<std::endl;
-            exit( EXIT_FAILURE);
-          }
-
-      }
-      else if(std::isdigit(c)){
-        buff.push_back(c);            
-        i++;
-        while(i < str.length() &&std::isdigit(str.at(i))){
-            buff.push_back(str.at(i));
-            i++;
-        }
-        i--;
-        tokens.push_back(Token{TokenType::int_lit,buff});
-        buff.clear();
-
-      }
-      else if(c==';'){
-        tokens.push_back(Token{TokenType::semi});
-      }
-      else if(std::isspace(c)){
-        continue;
-      }else {
-        std:: cerr<<"You messed up!"<<std::endl;
-        exit( EXIT_FAILURE);
-      }
-     
-   }
-
-   return tokens ;
-};
 
 
 std::string tokens_to_asm(const std::vector<Token>& tokens ){
@@ -72,7 +15,7 @@ std::string tokens_to_asm(const std::vector<Token>& tokens ){
   output <<"global _start\n_start:\n";
   for(int i=0;i<tokens.size();i++){
     const Token& token = tokens.at(i);
-    if(token.type==TokenType::_return){
+    if(token.type==TokenType::exit){
        if(i+1 <tokens.size() && tokens.at(i+1).type==TokenType::int_lit){
         if(i+2 <tokens.size() && tokens.at(i+2).type==TokenType::semi){
           output <<"   mov rax, 60\n";
@@ -109,8 +52,9 @@ int main(int argc,char* argv[]){
 
         
    } // it closes autmatically 
+   Tokenizer tokenizer(std::move(contents));
 
-   std::vector<Token> tokens=tokenize(contents);
+   std::vector<Token> tokens=tokenizer.tokenize();
    
   
   
