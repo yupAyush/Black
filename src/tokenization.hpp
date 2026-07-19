@@ -6,7 +6,9 @@
 enum class TokenType {
     exit,
     int_lit,
-    semi
+    semi,
+    closed_paren ,
+    open_paren,
 };
 
 struct Token {
@@ -42,6 +44,7 @@ public:
                 }
 
             }
+            
             else if(std::isdigit(peak().value())){
                 buff.push_back(consume());
                 while(peak().has_value() && std::isdigit(peak().value())){
@@ -51,6 +54,14 @@ public:
                 tokens.push_back(Token{TokenType::int_lit,buff});
                 buff.clear();
                 continue;
+            }
+            else if(peak().value()=='('){
+                consume();
+                tokens.push_back(Token{TokenType::open_paren});
+            }
+            else if(peak().value()==')') {
+                consume();
+                tokens.push_back(Token{TokenType::closed_paren});
             }
             else if(peak().value()==';'){
                 consume();

@@ -39,20 +39,32 @@ class Parser
         std::optional<NodeExit> parse (){
             std::optional<NodeExit> exit_node ;
             while(peak().has_value()){
-                if(peak().value().type==TokenType::exit){
+                if(peak().value().type==TokenType::exit && peak(1).has_value() && peak(1).value().type==TokenType::open_paren){
+                consume();
                 consume();
                 if(auto node_expr= parse_expr()){ // if exit code exits 
                         exit_node=NodeExit{node_expr.value()};
 
                 }else {
+                    if(peak(1).value().type!=TokenType::open_paren){
+                        std::cerr<<"Expected '(' "<<std::endl;
+                        exit(EXIT_FAILURE);
+                    }
                     std::cerr<<"Invalid expression"<<std::endl;
+                    exit(EXIT_FAILURE);
+
+                }
+                if(peak().has_value() && peak().value().type==TokenType::closed_paren){
+                    consume();
+                }else {
+                    std::cerr<<"Expected ')' "<<std::endl;
                     exit(EXIT_FAILURE);
 
                 }
                 if(peak().has_value() && peak().value().type==TokenType::semi){
                     consume();
                 }else {
-                    std::cerr<<"Invalid expression"<<std::endl;
+                    std::cerr<<"Expected ';' "<<std::endl;
                     exit(EXIT_FAILURE);
                 }
                 }
